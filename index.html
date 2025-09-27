@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>集結くん</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0d1117">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>集結くん</h1>
+    <p class="sub">1行軍集結時刻（UTC）を基準に、着弾間隔・集結時間・移動(秒)から各行軍の集/着を計算します</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>基本設定</h2>
+      <div class="row">
+        <label>1行軍集結時刻（UTC）</label>
+        <select id="startMin"></select>分
+        <select id="startSec"></select>秒
+        <button id="nowUtcBtn">今のUTC</button>
+      </div>
+      <div class="row">
+        <label>行軍数</label>
+        <select id="marchCount">
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+        </select>
+        <button id="applyCountBtn">行軍数変更</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>行軍設定</h2>
+      <table id="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>行軍名</th>
+            <th>着弾間隔(秒)</th>
+            <th>移動(秒)</th>
+            <th>集結時間</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="row right">
+        <button id="calcBtn">計算</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>結果（UTC）</h2>
+      <ul id="result"></ul>
+      <div class="row right">
+        <button id="copyBtn">結果をコピー</button>
+        <span id="copyMsg" class="msg"></span>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
