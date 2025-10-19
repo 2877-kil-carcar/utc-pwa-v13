@@ -3,71 +3,149 @@
 <head>
   <meta charset="utf8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>集結くん</title>
+  <title>SvS司令官</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0d1117">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
-    <h1>集結くん</h1>
+    <h1>SvS司令官</h1>
+    <div class="tabs">
+      <button class="tab active" data-target="rally">集結くん</button>
+      <button class="tab" data-target="sasikomi">差し込みさん</button>
+    </div>
     <p class="sub">1行軍集結時刻（UTC）を基準に、着弾間隔・集結時間・移動(秒)から各行軍の集/着を計算します</p>
   </header>
 
   <main>
-    <section class="card">
-      <h2>基本設定</h2>
-      <div class="row">
-        <label>1行軍集結時刻（UTC）</label>
-        <select id="startMin"></select>分
-        <select id="startSec"></select>秒
-        <button id="nowUtcBtn">今のUTC</button>
-      </div>
-      <div class="row">
-        <label>行軍数</label>
-        <select id="marchCount">
-          <option value="1">1</option>
-          <option value="2" selected>2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-        </select>
-        <button id="applyCountBtn">行軍数変更</button>
-      </div>
-    </section>
+    <!-- ===== 集結くん ===== -->
+    <div id="page-rally" class="page active">
+      <section class="card">
+        <h2>基本設定</h2>
+        <div class="row">
+          <label>1行軍集結時刻（UTC）</label>
+          <select id="startMin"></select>分
+          <select id="startSec"></select>秒
+          <button id="nowUtcBtn">今のUTC</button>
+        </div>
+        <div class="row">
+          <label>行軍数</label>
+          <select id="marchCount">
+            <option value="1">1</option>
+            <option value="2" selected>2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select>
+          <button id="applyCountBtn">行軍数変更</button>
+        </div>
+      </section>
 
-    <section class="card">
-      <h2>行軍設定</h2>
-      <table id="table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>行軍名</th>
-            <th>着弾間隔(秒)</th>
-            <th>移動(秒)</th>
-            <th>集結時間</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-      <div class="row right">
-        <button id="calcBtn">計算</button>
-      </div>
-    </section>
+      <section class="card">
+        <h2>行軍設定</h2>
+        <table id="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>行軍名</th>
+              <th>着弾間隔(秒)</th>
+              <th>移動(秒)</th>
+              <th>集結時間</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="row right">
+          <button id="calcBtn">計算</button>
+        </div>
+      </section>
 
-    <section class="card">
-      <h2>結果（UTC）</h2>
-      <ul id="result"></ul>
-      <div class="row right">
-        <button id="copyBtn">結果をコピー</button>
-        <span id="copyMsg" class="msg"></span>
-      </div>
-    </section>
+      <section class="card">
+        <h2>結果（UTC）</h2>
+        <ul id="result"></ul>
+        <div class="row right">
+          <button id="copyBtn">結果をコピー</button>
+          <span id="copyMsg" class="msg"></span>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== 差し込みさん ===== -->
+    <div id="page-sasikomi" class="page hidden">
+      <section class="card">
+        <h2>差し込み設定</h2>
+        <div class="row">
+          <label>敵の着弾時刻（UTC）</label>
+          <select id="enemyMin"></select>分
+          <select id="enemySec"></select>秒
+          <button id="nowEnemyBtn">今のUTC</button>
+        </div>
+        <div class="row">
+          <label>差し込み秒数</label>
+          <select id="afterSec">
+            <option value="0">0 秒後</option>
+            <option value="1" selected>1 秒後</option>
+            <option value="2">2 秒後</option>
+            <option value="3">3 秒後</option>
+            <option value="4">4 秒後</option>
+            <option value="5">5 秒後</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>人数</label>
+          <select id="personCount">
+            <option>1</option>
+            <option selected>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+            <option>11</option>
+            <option>12</option>
+            <option>13</option>
+            <option>14</option>
+            <option>15</option>
+          </select>
+          <button id="applyPersonBtn">人数変更</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>差し込みリスト</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>行軍名</th>
+              <th>移動(秒)</th>
+            </tr>
+          </thead>
+          <tbody id="sasikomiBody"></tbody>
+        </table>
+        <div class="row right">
+          <button id="sasikomiCalcBtn">計算</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>結果（UTC）</h2>
+        <ul id="sasikomiResult"></ul>
+        <div class="row right">
+          <button id="sasikomiCopyBtn">結果をコピー</button>
+          <span id="sasikomiCopyMsg" class="msg"></span>
+        </div>
+      </section>
+    </div>
   </main>
 
   <script src="app.js"></script>
