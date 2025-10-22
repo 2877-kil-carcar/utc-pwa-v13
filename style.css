@@ -199,6 +199,85 @@ body.mode-sasikomi {
   background: var(--acc);
   color: #fff;
 }
+/* ==== 非表示ページのiframeを完全に潰す ==== */
 .page.hidden {
-  display: none;
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+.page.hidden iframe {
+  display: none !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+/* === 解説資料（縦並び・中央寄せ・固定幅）=== */
+#page-docs {
+  width: 100%;
+  background: #0b0f14;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 0 60px;
+}
+
+.doc-split {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 48px;
+}
+
+/* 各資料ブロック */
+.doc-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.doc-title {
+  width: 850px;              /* 固定幅 (お好みで 800〜1000px) */
+  max-width: 95vw;           /* 小さい画面では縮小 */
+  text-align: left;
+  color: #60a5fa;
+  font-size: 20px;
+  font-weight: 600;
+  border-left: 4px solid #2563eb;
+  padding-left: 10px;
+  margin: 8px 0 12px;
+    /* ★ 高さを安定させるポイント！ */
+  line-height: 1.2;
+  min-height: 1.2em;     /* ← 高さ固定：文字行高と一致 */
+  height: auto !important;
+}
+
+/* iframe本体 */
+.doc-frame {
+  width: 850px;              /* ← 固定幅。100%ではない！ */
+  max-width: 95vw;           /* 画面が狭いときだけ自動縮小 */
+  height: 85vh;              /* 各資料の高さ */
+  border: 1px solid #1f2937;
+  border-radius: 8px;
+  background: #0b0f14;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+/* スマホ対応 */
+@media (max-width: 900px) {
+  .doc-title,
+  .doc-frame {
+    width: 95vw;
+    height: 70vh;
+  }
+}
+
+.doc-frame + .doc-frame {
+  border-top: 2px solid #1f2937;
+}
+
+.doc-frame {
+  overflow: auto;
 }

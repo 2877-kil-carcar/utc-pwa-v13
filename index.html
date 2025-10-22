@@ -14,6 +14,7 @@
     <div class="tabs">
       <button class="tab active" data-target="rally">集結くん</button>
       <button class="tab" data-target="sasikomi">差し込みさん</button>
+      <button class="tab" data-target="docs">📘 管理者資料</button>
     </div>
     <p class="sub">1行軍集結時刻（UTC）を基準に、着弾間隔・集結時間・移動(秒)から各行軍の集/着を計算します</p>
   </header>
@@ -146,6 +147,22 @@
         </div>
       </section>
     </div>
+
+    <!-- ===== 解説資料（carlos.html & destiny.html 横並び） ===== -->
+    <div id="page-docs" class="page hidden">
+      <div class="doc-split">
+        <div class="doc-block">
+          <h2 class="doc-title">📗 最終ダメージ計算式</h2>
+          <iframe src="carlos.html" class="doc-frame" loading="lazy"></iframe>
+        </div>
+
+        <div class="doc-block">
+          <h2 class="doc-title">⚙️ 英雄スキル分類</h2>
+          <iframe src="destiny.html" class="doc-frame" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <script src="app.js"></script>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>英雄スキルの分類について｜ホワイトアウトサバイバル</title>
+<style>
+  body {
+    background: #0b0f14;
+    color: #e5e7eb;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
+    line-height: 1.8;
+    margin: 0;
+    padding: 40px 20px;
+  }
+  h1, h2, h3 {
+    color: #60a5fa;
+    margin-top: 1.5em;
+  }
+  h1 { font-size: 2rem; border-left: 6px solid #3b82f6; padding-left: 10px; }
+  h2 { font-size: 1.4rem; border-left: 4px solid #2563eb; padding-left: 8px; margin-top: 1.8em; }
+  h3 { font-size: 1.1rem; color: #93c5fd; margin-top: 1.2em; }
+  section {
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+  pre {
+    background: #0f172a;
+    color: #dbeafe;
+    border-radius: 10px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+  ul {
+    list-style-type: "💠 ";
+    padding-left: 1.2em;
+  }
+  li { margin: 4px 0; }
+  .note {
+    background: rgba(96,165,250,0.1);
+    border-left: 3px solid #60a5fa;
+    padding: 10px 14px;
+    margin-top: 12px;
+    border-radius: 8px;
+  }
+  .summary {
+    background: linear-gradient(180deg, rgba(34,197,94,0.12), rgba(22,163,74,0.08));
+    border-left: 4px solid #34d399;
+    padding: 10px 16px;
+    border-radius: 10px;
+  }
+</style>
+</head>
+<body>
+
+<h1>英雄スキルの分類について</h1>
+
+<p>英雄スキルは現状下記11種類に分類<br>
+主なスキルの計算はこの分類単位で行う</p>
+
+<section>
+<h2>【スキル種類】</h2>
+<ul>
+  <li>攻撃力上昇(ソユンなど)</li>
+  <li>防御力上昇(ジンマンなど)</li>
+  <li>殺傷力上昇(ジェシーなど)</li>
+  <li>HP上昇(パトリックなど)</li>
+  <li>被ダメージ上昇(ミアなど)</li>
+  <li>攻撃力低下(リンセツなど)</li>
+  <li>防御力低下(ヘンドリックなど)</li>
+  <li>殺傷力低下(ボーガンなど)</li>
+  <li>被ダメージ減少(セルゲイなど)</li>
+  <li>追加ダメージ(割愛)</li>
+  <li>クリティカル(割愛)</li>
+</ul>
+<p>※HP低下(現状なしだが今後実装？)</p>
+
+<div class="note">
+<h3>【ややこしい表記について】</h3>
+<ul>
+  <li>味方与ダメージ上昇 → 殺傷力上昇に分類</li>
+  <li>敵与ダメージ低下 → 殺傷力低下に分類</li>
+</ul>
+</div>
+</section>
+
+<section>
+<h2>英雄スキルの重複概念</h2>
+<p>発動したスキルにおいては全て共通で上記分類に基づき、分類単位で全て加算処理後の値を1つのパラメータとしてダメージ計算を行う。</p>
+
+<h3>【各種パラメータの算出】</h3>
+<pre>例)
+ジェシー4人 → 25% × 4 = 100%
+殺傷力上昇の補正値（パラメータ）= 100% として後続のダメージ計算に使用</pre>
+</section>
+
+<section>
+<h2>スキル重複におけるダメージ補正率</h2>
+<p>単純比例でないスキルとサンプル。<br>
+被ダメージ上昇は生存している兵種数に応じて補正率が変動（カッコ内は1兵種の場合）。</p>
+
+<h3>💠 被ダメージ上昇</h3>
+<pre>(パラメータ：25%〜100%)
+1:約25(22.5)%
+2:約50(45)%
+3:約75(67.5)%
+4:約100(90)%</pre>
+
+<h3>💠 被ダメージ減少</h3>
+<pre>(パラメータ：20%〜80%)
+1:-16.7%
+2:-28.6%
+3:-37.5%
+4:-44.4%
+
+(パラメータ：25%〜100%)
+1:-20%
+2:-33.3%
+3:-42.9%
+4:-50%
+
+(パラメータ：30%〜120%)
+1:-23.1%
+2:-37.5%
+3:-47.4%
+4:-54.5%</pre>
+</section>
+
+<section>
+<h2>ダメージ補正率を最大化させるためには</h2>
+<p>英雄スキルは前述した分類単位でダメージ計算に使用されるパラメータとなる。<br>
+パラメータ毎の計算方法はそれぞれ異なり複雑なため割愛するが、基本的には『多くのパラメータを使用した方がダメージ補正率が大きくなる』。</p>
+
+<h3>【ダメージ補正率の優劣】</h3>
+<p>単一 &lt; 混合1 &lt; 混合2</p>
+<pre>
+💠単一
+ジェシー(25%)×3=75%
+
+💠混合1
+ジェシー(25%)×2=50%
+ソユン(25%)×1=25%
+
+💠混合2
+ジェシー(25%)×1=25%
+ソユン(25%)×1=25%
+グエン(25%)×1=25%
+</pre>
+</section>
+
+<section>
+<h2>攻撃力と殺傷力の優位性について</h2>
+<p>従来、攻撃力よりも殺傷力の方が計算上の重み付けが高く強化を優先すべきとしていましたが、ダメージ計算式の考察を進める中で誤りの可能性が高いと判断。</p>
+
+<pre>『ダメージ計算上は攻撃力と殺傷力は等価』</pre>
+
+<p>ただし、育成観点では最新英雄さえ育成すれば上がりやすい攻撃力・防御力よりも、殺傷力の強化を優先した方が有利に働くことが多い傾向であることは変わらない。<br>
+スキル補正の観点では攻撃力と殺傷力の分類を意識して、どちらか一方のパラメータを上げるのではなく、多くのパラメータを使用することを優先すべき。</p>
+</section>
+
+<section>
+<h2>スキルの相殺について</h2>
+<p>前述の通り各パラメータごとに補正値は異なっているものの、対称関係にあるスキルが同じ補正値である場合は、計算上ダメージ補正率は0%となり全て相殺される。</p>
+
+<pre>例)
+攻撃力上昇(25%)と攻撃力低下(25%)＝ダメージ補正率(0%)</pre>
+</section>
+
+<section class="summary">
+<h2>まとめ</h2>
+<ul>
+  <li>英雄スキルには分類がある</li>
+  <li>分類単位で加算処理後にダメージ計算</li>
+  <li>同じ補正率でもパラメータによってダメージ変動率が異なるもの有</li>
+  <li>攻撃力と殺傷力は等価</li>
+  <li>パラメータ数を意識して単一よりも混合を優先して採用する</li>
+  <li>同じ系統の各パラメータは相対的に補正率が均等になるよう調整する</li>
+</ul>
+</section>
+
+</body>
+</html>

@@ -1,5 +1,5 @@
 // ==============================
-// 集結くん＋差し込みさん (PWA) - v0.7
+// 集結くん＋差し込みさん (PWA)
 // ==============================
 
 // ====== ユーティリティ ======
@@ -39,21 +39,33 @@ document.addEventListener("DOMContentLoaded", () => {
   const pages = document.querySelectorAll(".page");
   const subtitle = document.querySelector(".sub");
 
+// ===== タブ切替（パスワード付き） =====
+const PASSWORD = "carlos";
+const lockedPages = new Set(["docs"]);
+
 tabs.forEach(tab => {
   tab.addEventListener("click", () => {
-    // タブのactive切替
-    tabs.forEach(t => t.classList.remove("active"));
-    tab.classList.add("active");
-
     const target = tab.dataset.target;
 
-    // ページ切替
+    // パスワード制御
+    if (lockedPages.has(target)) {
+      const input = prompt("閲覧にはパスワードが必要です：");
+      if (input !== PASSWORD) {
+        alert("パスワードが違います。");
+        return;
+      }
+      lockedPages.delete(target); // 一度解除したら再入力不要
+    }
+
+    // タブ切替
+    tabs.forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
     pages.forEach(p => {
       p.classList.toggle("active", p.id === `page-${target}`);
       p.classList.toggle("hidden", p.id !== `page-${target}`);
     });
 
-    // サブタイトル + 背景切替
+    // サブタイトルや背景切替（既存処理を維持）
     if (target === "rally") {
       subtitle.textContent =
         "1行軍集結時刻（UTC）を基準に、着弾間隔・集結時間・移動(秒)から各行軍の集/着を計算します";
@@ -64,6 +76,9 @@ tabs.forEach(tab => {
         "着弾をもとに駐屯行軍開始時間(差し込みタイミング)を計算します";
       document.body.classList.add("mode-sasikomi");
       document.body.classList.remove("mode-rally");
+    } else if (target === "docs") {
+      subtitle.textContent = "ダメージ計算式と英雄スキル分類の解説資料を表示します";
+      document.body.classList.remove("mode-rally", "mode-sasikomi");
     }
   });
 });
