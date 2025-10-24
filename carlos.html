@@ -24,7 +24,7 @@
   body{
     margin:0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-    background: radial-gradient(1200px 800px at 20% -10%, #0f172a 0%, #0b0f14 60%);
+    background: #0b0f14;
     color:var(--text);
     line-height:1.7;
     letter-spacing: .02em;
@@ -116,15 +116,30 @@
     <!-- 最終ダメージ計算式 -->
     <section class="card">
       <h2>⚔ 最終ダメージ計算式</h2>
-      <pre>最終ダメージ ＝
- 🟩 基礎係数 × 🟦 攻撃力 ×
-  ( 1 + 攻撃力上昇 − 攻撃力低下 ) ×
-  ( 1 + 与ダメージ上昇 − 敵与ダメージ低下 ) ×
-  ( 1 + 防御力低下 − 防御力上昇 ) ×
-  ( 1 + 被ダメージ上昇 ) ÷ ( 1 + 被ダメージ減少 ) ×
-  ( 1 + 🟨 クリティカル補正 ) ×
-  🟥 特殊補正</pre>
+      <pre>最終ダメージ ＝    
+        🟩 基礎係数 × 
+        (
+          ( 
+            🟦 攻撃力 × ( 1 + 攻撃力上昇 − 攻撃力低下 ) × 
+            🟦 殺傷力 × ( 1 + 殺傷力上昇 − 殺傷力低下 ) 
+          )
+          ÷
+          ( 
+            🟦 防御力 × ( 1 + 防御力上昇 − 防御力低下 ) × 
+            🟦 HP × ( 1 + HP上昇 − HP低下)
+          )
+        ) ×
+        ( 1 + 与ダメ上昇 ) × ∏( 1 − 与ダメ減少n ) ×
+        ( 1 + 被ダメ上昇 ) × ∏( 1 − 被ダメ減少m ) ×
+        ( 1 + 🟨 クリティカル補正 ) ×
+        🟥 特殊補正</pre>
+    <div class="kicker">
+      「∏(1 − 与ダメ減少n)」「∏(1 − 被ダメ減少m)」は、<br/>
+      同系統が複数ある場合に全部掛け合わせるという意味（乗算スタック）。<br/>
+      被ダメ減少20％が2つの場合、(1 − 0.2) × (1 − 0.2)と計算する。
+    </div>
     </section>
+
 
     <!-- 処理のイメージ -->
     <section class="card">
@@ -139,7 +154,8 @@
         <strong>判定の考え方：</strong><br/>
         ・残HPが 0 以下になった方 → 撃破（全滅または撤退）<br/>
         ・残HPが 残っている方 → 勝利（防衛成功 or 攻撃成功）<br/>
-        ・両者が生き残る → 戦闘が続行（次ターンへ）
+        ・両者が生き残る → 戦闘が続行（次ターンへ）<br/>
+        ・HP上昇、HP低下はここの計算で使用される
       </div>
     </section>
 
@@ -200,9 +216,9 @@
         </div>
       </section>
 
-      <!-- 攻撃力 -->
+      <!-- 攻撃力/防御力 -->
       <section class="card">
-        <h2><span class="c-blue">🟦</span> 攻撃力（Attack Power）</h2>
+        <h2><span class="c-blue">🟦</span> 攻撃力（Attack Power）/ 防御力（Defense Power）</h2>
         <div class="kicker">研究・装備・専門家・英雄などによって上昇する恒常的な戦闘力の基礎値。<br/>プレイヤーが強化を積み上げていく「本体ステータス層」であり、<br/>全戦闘において常時有効。全ての計算の土台になる。</div>
         <hr class="sep" />
         <div class="tag">該当要素：</div>

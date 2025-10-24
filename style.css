@@ -281,3 +281,14 @@ body.mode-sasikomi {
 .doc-frame {
   overflow: auto;
 }
+
+#page-simulator h2 {
+  color: #ffcc00;
+  text-shadow: 1px 1px 2px #333;
+}
+#page-simulator .row {
+  margin: 10px 0;
+}
+#page-simulator select {
+  min-width: 140px;
+}
