@@ -1,5 +1,5 @@
 // sw.js
-const CACHE_NAME = "utc-pwa-v20251022"; // ← バージョンを上げる
+const CACHE_NAME = "utc-pwa-v20251024"; // ← バージョンを上げる
 const ASSETS = [
   "./",
   "./index.html",
