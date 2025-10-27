@@ -180,7 +180,8 @@ export function initSimulator() {
       // バフ一覧を整形
       const formatBuffs = (label, buffs) => {
         let lines = [`${label}バフ一覧`];
-        for (let i = 2; i <= 10; i++) {
+        const maxIndex = Math.max(...Object.keys(buffs).map(Number));
+        for (let i = 2; i <= maxIndex; i++) {
           const name = buffs[i].name;
           const val = buffs[i].value;
 

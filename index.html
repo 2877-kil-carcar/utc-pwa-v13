@@ -15,6 +15,7 @@
       <button class="tab active" data-target="rally">集結くん</button>
       <button class="tab" data-target="sasikomi">差し込みさん</button>
       <button class="tab" data-target="simulator">英雄どれにしよちゃん</button>
+      <button class="tab" data-target="armyreg">行軍登録</button>
       <button class="tab" data-target="docs">📘 管理者資料</button>
     </div>
     <p class="sub">1行軍集結時刻（UTC）を基準に、着弾間隔・集結時間・移動(秒)から各行軍の集/着を計算します</p>
@@ -46,6 +47,7 @@
             <option value="10">10</option>
           </select>
           <button id="applyCountBtn">行軍数変更</button>
+          <button id="loadArmyBtn">HKZ</button>
         </div>
       </section>
 
@@ -119,6 +121,7 @@
             <option>15</option>
           </select>
           <button id="applyPersonBtn">人数変更</button>
+          <button id="loadArmyBtnSasikomi">HKZ</button>
         </div>
       </section>
 
@@ -195,6 +198,39 @@
       </div>
     </div>
 
+
+    <div id="page-armyreg" class="page hidden">
+      <section class="card">
+        <h2>行軍登録</h2>
+        <div class="row">
+          <label>行軍名</label>
+          <input type="text" id="armyName" placeholder="例：第1部隊" />
+        </div>
+        <div class="row">
+          <label>移動(秒)</label>
+          <input type="number" id="armyTravel" min="0" step="1" />
+        </div>
+        <div class="row right">
+          <button id="armySaveBtn">登録</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>登録済み行軍</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>反映</th>
+              <th>行軍名</th>
+              <th>移動(秒)</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="armyList"></tbody>
+        </table>
+      </section>
+    </div>
+    
   </main>
 
   <script src="app.js"></script>
@@ -216,5 +252,23 @@
       });
     });
   </script>
+
+  <!-- 行軍登録：機能初期化 -->
+  <script type="module">
+    import { initArmyRegistry } from "./march-registry.js";
+
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".tab").forEach(btn => {  
+        btn.addEventListener("click", () => {
+          const target = btn.dataset.target;
+          if (target === "armyreg") {                  
+            console.log("🟢 行軍登録タブが開かれた");
+            initArmyRegistry();
+          }
+        });
+      });
+    });
+  </script>
+
   </body>
 </html>

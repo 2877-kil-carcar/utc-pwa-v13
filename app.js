@@ -1,7 +1,6 @@
 // ==============================
 // 集結くん＋差し込みさん (PWA)
 // ==============================
-
 // ====== ユーティリティ ======
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -71,14 +70,38 @@ tabs.forEach(tab => {
         "1行軍集結時刻（UTC）を基準に、着弾間隔・集結時間・移動(秒)から各行軍の集/着を計算します";
       document.body.classList.add("mode-rally");
       document.body.classList.remove("mode-sasikomi");
+      document.body.classList.remove("mode-simulator");
+      document.body.classList.remove("mode-armyreg");
+      document.body.classList.remove("mode-docs");
     } else if (target === "sasikomi") {
       subtitle.textContent =
         "着弾をもとに駐屯行軍開始時間(差し込みタイミング)を計算します";
       document.body.classList.add("mode-sasikomi");
       document.body.classList.remove("mode-rally");
+      document.body.classList.remove("mode-simulator");
+      document.body.classList.remove("mode-armyreg");
+      document.body.classList.remove("mode-docs");
+    } else if (target === "simulator") {
+      subtitle.textContent = "";
+      document.body.classList.add("mode-simulator");
+      document.body.classList.remove("mode-rally");
+      document.body.classList.remove("mode-sasikomi");
+      document.body.classList.remove("mode-armyreg");
+      document.body.classList.remove("mode-docs");
+    } else if (target === "armyreg") {
+      subtitle.textContent = "";
+      document.body.classList.add("mode-armyreg");
+      document.body.classList.remove("mode-rally");
+      document.body.classList.remove("mode-sasikomi");
+      document.body.classList.remove("mode-simulator");
+      document.body.classList.remove("mode-docs");
     } else if (target === "docs") {
       subtitle.textContent = "ダメージ計算式と英雄スキル分類の解説資料を表示します";
-      document.body.classList.remove("mode-rally", "mode-sasikomi");
+      document.body.classList.add("mode-docs");
+      document.body.classList.remove("mode-rally");
+      document.body.classList.remove("mode-sasikomi");
+      document.body.classList.remove("mode-simulator");
+      document.body.classList.remove("mode-armyreg");
     }
   });
 });
@@ -100,7 +123,7 @@ tabs.forEach(tab => {
   }
   function buildRows(n){
     tbody.innerHTML = "";
-    const count = Math.max(1, Math.min(10, n||1));
+    const count = Math.max(1, n || 1);
     for (let i=1;i<=count;i++){
       const tr = document.createElement("tr");
       const gapCell = (i===1)?`<td>-</td>`:`<td><select class="gap">${gapOptionsHTML(0)}</select></td>`;
@@ -126,7 +149,7 @@ tabs.forEach(tab => {
   })();
 
   $("#applyCountBtn")?.addEventListener("click", () => {
-    const n = Math.max(1, Math.min(10, parseInt($("#marchCount").value, 10) || 1));
+    const n = Math.max(1, parseInt($("#marchCount").value, 10) || 1);
     buildRows(n);
   });
 

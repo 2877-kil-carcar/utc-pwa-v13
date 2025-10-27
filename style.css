@@ -149,7 +149,9 @@ body {
     url("images/background_v7_2.jpeg") center/cover no-repeat; /* 初期＝集結くん背景 */
   background-size:
     auto,          /* グラデーション */
-    80% auto;      /* 背面画像サイズ */
+    /*80% auto;*/      /* 背面画像サイズ */
+    contain; /* ← ★ 全体表示に変更 */
+  background-color: #000; /* 背景が余る部分の色 */
   background-position: center;
   background-repeat: no-repeat;
   transition: background-image 0.6s ease-in-out;
@@ -166,6 +168,20 @@ body.mode-sasikomi {
     linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
     url("images/background_v7_1.jpeg");
 }
+body.mode-simulator {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("images/background_v7_3.jpeg");
+}body.mode-armyreg {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("images/background_v7_4.jpeg");
+}
+/* === 管理者資料ページでは背景画像を無効化 === */
+body.mode-docs {
+  background: #0b0f14 !important; /* 単色背景（iframe背景と合わせる） */
+}
+
 
 /* ↓ いったん使わないが後で再利用予定（半透明の2枚目重ね処理） */
 /*--------------------------------------------------------------*/
