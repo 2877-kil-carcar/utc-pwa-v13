@@ -23,20 +23,69 @@ function getSelectedHeroes(ids) {
 }
 
 // =====================================================
-// 減少バフ積算（type:7,9）
+// 減少バフ積算（type:7 与ダメ減少 / type:9 被ダメ減少）
+// collectBuffs と完全に同じ期待値仕様
 // =====================================================
 function calcStackedReduction(heroes, type) {
   const group = heroes
     .flatMap(c => c.skills)
-    .filter(s => s.type === type && s.buff);
+    .filter(s => s.type === type);
 
+  // スキルなし → 軽減なし（0）
   if (group.length === 0) return 0;
 
-  let totalMultiplier = 1;
+  let mult = 1; // ∏(1 - rate)
+
   for (const s of group) {
-    totalMultiplier *= (1 - s.buff / 100);
+    let rate = 0;
+
+    // -----------------------------------------
+    // ▼ 通常の固定スキル（例：セルゲイ 20%）
+    // -----------------------------------------
+    if (typeof s.buff === "number") {
+      rate = s.buff / 100;
+    }
+
+    // -----------------------------------------
+    // ▼ アクモスなど兵種別の軽減スキル
+    //    shield/spear/bow を持つものに該当
+    // -----------------------------------------
+    else if (
+      typeof s.shield === "number" ||
+      typeof s.spear === "number" ||
+      typeof s.bow === "number"
+    ) {
+      // 兵士割合（固定 6:2:2）
+      const S = 6, P = 2, B = 2;
+
+      // 兵種平均の軽減率（％）
+      const avgPct =
+        ((s.shield ?? 0) * S +
+         (s.spear  ?? 0) * P +
+         (s.bow    ?? 0) * B) /
+        (S + P + B);
+
+      const baseRate = avgPct / 100; // 兵種平均（例 54% → 0.54）
+
+      // 発動確率（p）、持続ターン（L）
+      const p = s.p ?? 1;
+      const L = s.L ?? 1;
+
+      // 有効発動率（例 0.25 * 2 = 0.5）
+      const effectiveP = Math.min(1, p * L);
+
+      // 期待値（例 0.54 × 0.5 = 0.27）
+      rate = baseRate * effectiveP;
+    }
+
+    // -----------------------------------------
+    // ▼ スタックは乗算
+    // -----------------------------------------
+    mult *= (1 - rate);
   }
-  return 1 - totalMultiplier; // 実効減少率（例: 0.36 → 36%減）
+
+  // 軽減率（0〜1）で返す
+  return 1 - mult;
 }
 
 // =====================================================
@@ -49,7 +98,8 @@ function calcFinalDamage(atkBuffs, defBuffs, atkHeroes, defHeroes, base) {
   const atkPower =
     base.atk *
     (1 + atkBuffs[2].value - defBuffs[3].value) *      // 攻撃力上昇・低下
-    (1 + atkBuffs[12].value - defBuffs[13].value);     // 殺傷力上昇・低下
+    (1 + atkBuffs[12].value - defBuffs[13].value) *    // 殺傷力上昇・低下
+    (1 + atkBuffs[14].value);                          // レイナ 通常攻撃の与ダメ上昇
 
   // ----------------------------
   // 防御側：防御力 × HP（相手のデバフ込み）

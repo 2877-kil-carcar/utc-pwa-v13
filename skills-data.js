@@ -41,6 +41,13 @@ export const CharacterSkills = [
               { type: 6, detail: "与ダメ +25%", buff: 25 }
             ] },
 
+  // "通常攻撃ダメージ上昇" },
+  {
+    name: "レイナ",
+    skills: [
+              { type: 14, detail: "通常攻撃 与ダメ +30%", buff: 30 }
+            ] },
+
 // "与ダメ減少" },
   { name: "ボーガン", 
     skills: [
@@ -57,6 +64,16 @@ export const CharacterSkills = [
   { name: "セルゲイ", 
     skills: [
               { type: 9, detail: "被ダメ -20%", buff: 20 }
+            ] },
+
+ // "ターン被ダメ減少" },
+  { name: "アクモス",
+    skills: [
+              { type: 9,
+                detail: "盾兵 被ダメ -70% / 槍弓 被ダメ -30%",
+                shield: 70, spear: 30, bow: 30,
+                  p: 0.25, L: 2
+              }
             ] },
 
 // "HP上昇" },
@@ -87,6 +104,10 @@ export const CharacterSkills = [
   { name: "ミア", 
     skills: [
               { type:  8, detail: "50%確率 被ダメ +50%", p: 0.5, L: 1, r: 0.5 }
+            ] },
+  { name: "リオン", 
+    skills: [
+              { type: 6, detail: "40%確率 与ダメ +50%", p: 0.4, L: 1, r: 0.5 }
             ] },
 
 // ターン確率
@@ -155,7 +176,7 @@ export const SkillData = [
   { type: 11, name: "HP低下" },
   { type: 12, name: "殺傷力上昇" },
   { type: 13, name: "殺傷力低下" },
-
+  { type: 14, name: "通常攻撃ダメージ上昇" },
 ];
 
 // =========================
@@ -225,49 +246,106 @@ export function calcBuffFromSelection(selectedHeroes, skillType) {
  * 選択された英雄リストから全タイプのバフをまとめて取得
  */
 export function collectBuffs(selectedHeroes) {
-  const buffTypes = [
-    { type: 2, name: "攻撃力上昇" },
-    { type: 3, name: "攻撃力低下" },
-    { type: 4, name: "防御力上昇" },
-    { type: 5, name: "防御力低下" },
-    { type: 6, name: "与ダメ上昇" },
-    { type: 7, name: "与ダメ減少" },
-    { type: 8, name: "被ダメ上昇" },
-    { type: 9, name: "被ダメ減少" },
-    { type: 10, name: "HP上昇" },
-    { type: 11, name: "HP低下" },
-    { type: 12, name: "殺傷力上昇" },
-    { type: 13, name: "殺傷力低下" },
-  ];
+     // 減少系は ∏(1 − x) でスタック
+
+     // type7＝与ダメ減少, type9＝被ダメ減少
+     // type7（与ダメ減少）と type9（被ダメ減少）は乗算
+     
+     // buff の有無に関係なく集める（アクモスは buff を持たないため）
+     
+     // アクモスのように buff を持たず shield/spear/bow を持つ場合は
+     // 「兵種平均 → 確率 × 持続」を適用して期待値で減少率を算出
 
   const buffs = {};
 
-  for (const { type, name } of buffTypes) {
-    if (type === 7 || type === 9) {
-      // 減少系は ∏(1 − x) でスタック
+  for (const { type, name } of SkillData) {
+    // ============================================
+    // ▼ 減少系(type7＝与ダメ減少 / type9＝被ダメ減少)
+    // ============================================
+    if (type === 7 || type === 9) {   
       const group = selectedHeroes
         .flatMap(c => c.skills)
-        .filter(s => s.type === type && s.buff);
+        .filter(s => s.type === type);
+
+      // スキルが誰も持っていない → 軽減なし（=1）
+      if (group.length === 0) {
+        buffs[type] = { name, value: 1, count: 0 };
+        continue;
+      }
 
       let mult = 1;
-      for (const s of group) mult *= (1 - s.buff / 100);
+
+      for (const s of group) {
+        let rate = 0;
+
+        // -----------------------------------------
+        // ▼ 通常の buff スキル（例：セルゲイ20%）
+        // -----------------------------------------
+        if (typeof s.buff === "number") {
+          rate = s.buff / 100;
+        } 
+        // -----------------------------------------
+        // ▼ アクモス型（shield / spear / bow）
+        //    → 兵種平均 → p × L × r（期待値）
+        // -----------------------------------------
+        else if (
+          typeof s.shield === "number" ||
+          typeof s.spear === "number" ||
+          typeof s.bow === "number"
+        ) {
+          // アクモス型：兵種別の軽減値を平均化
+          // 兵士割合 6:2:2
+          const S = 6, P = 2, B = 2; 
+
+          // 兵種平均の軽減率（％）
+          const avgPct =
+            ((s.shield ?? 0) * S +
+             (s.spear  ?? 0) * P +
+             (s.bow    ?? 0) * B) /
+            (S + P + B);
+
+
+          // 基礎軽減率（例 0.54）
+          const baseRate = avgPct / 100;
+
+          // 発動確率（p）、持続ターン（L）
+          const p = s.p ?? 1;
+          const L = s.L ?? 1;
+
+          // 有効発動率（例：0.25 × 2 = 0.5）
+          const effectiveP = Math.min(1, p * L);
+
+          // 最終軽減（期待値）例：0.54 × 0.5 = 0.27
+          rate = baseRate * effectiveP;
+        }
+
+        // -----------------------------------------
+        // ▼ スタックは乗算
+        // -----------------------------------------
+        mult *= (1 - rate);
+      }
 
       buffs[type] = {
         name,
-        value: mult,     
-        count: group.length,
+        value: mult,    // UI表示では (1 - mult)*100%
+        count: group.length
       };
-    } else {
-      // それ以外（加算 or 平均）は calcBuffFromSelection を使う
-      const { buff, N } = calcBuffFromSelection(selectedHeroes, type);
-      buffs[type] = {
-        name,
-        value: buff,          // ← 小数（例 0.4）
-        count: N
-      };
-    }
+
+      continue;
+    }    
+    
+    // ============================================
+    // ▼ 通常スキル（加算 or 平均）
+    // ============================================
+    const { buff, N } = calcBuffFromSelection(selectedHeroes, type);
+
+    buffs[type] = {
+      name,
+      value: buff,  // 小数値（0.40 なら 40%）
+      count: N
+    };
+  
   }
-
   return buffs;
 }
 
